@@ -6,6 +6,10 @@
 # Maven
 target/
 
+# SQLite 数据库文件（本地数据不提交）
+*.db
+*.db-journal
+
 # OS
 .DS_Store
 Thumbs.db
