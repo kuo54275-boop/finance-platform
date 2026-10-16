@@ -1,0 +1,109 @@
+### 1. 测试用户注册接口（POST 请求，提交 JSON 数据）
+POST http://localhost:8080/user/register
+Content-Type: application/json
+
+{
+  "phone": "13912345678",
+  "email": "xiaobai@finance.com",
+  "password": "abc123password",
+  "nickname": "理财达人小白"
+}
+
+
+### 2. 测试用户登录接口（POST 请求，提交表单参数）
+POST http://localhost:8080/user/login
+Content-Type: application/x-www-form-urlencoded
+
+account=13912345678&password=abc123password
+### 3. 测试添加账目接口（记一笔支出）
+POST http://localhost:8080/record/add
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "type": "EXPENSE",
+  "category": "餐饮",
+  "amount": 25.50,
+  "remark": "今天中午吃了个豪华木桶饭"
+}
+
+
+### 4. 测试获取用户账目列表接口（GET请求）
+GET http://localhost:8080/record/list?userId=1
+### 5. 测试绑定资产账户接口
+POST http://localhost:8080/account/add
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "name": "招商银行卡",
+  "type": "CARD",
+  "balance": 5000.00
+}
+
+
+### 6. 测试获取用户资产账户列表
+
+GET http://localhost:8080/account/list?userId=1
+### 7. 联动测试：往招商银行卡（accountId=1）里记一笔 150 元的餐饮支出
+POST http://localhost:8080/record/add
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "accountId": 1,
+  "type": "EXPENSE",
+  "category": "餐饮",
+  "amount": 150.00,
+  "remark": "请朋友吃火锅"
+}
+
+
+### 8. 检查招商银行卡的余额是不是自动从 5000 扣减成了 4850！
+GET http://localhost:8080/account/list?userId=1
+### 9. 测试修改账目（把第1笔豪华木桶饭的备注改掉）
+PUT http://localhost:8080/record/update
+Content-Type: application/json
+
+{
+  "id": 1,
+  "remark": "今天中午吃了个无敌豪华双拼木桶饭"
+}
+
+
+### 10. 测试删除账目（删除第1笔账目）
+DELETE http://localhost:8080/record/delete/1
+
+
+### 11. 触发预算超支测试：再记一笔 20 元的餐饮支出（前面火锅已经花了150，预算只有100）
+POST http://localhost:8080/record/add
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "accountId": 1,
+  "type": "EXPENSE",
+  "category": "餐饮",
+  "amount": 20.00,
+  "remark": "买个甜筒冰淇淋"
+}
+### 12. 测试月度收支概览与分类占比数据（图表核心后端接口）
+GET http://localhost:8080/record/dashboard?userId=1&month=2026-07
+### 13. 设置一个即将到期的账单提醒（如 2026-07-03 到期）
+POST http://localhost:8080/bill/add
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "title": "交通银行信用卡还款",
+  "amount": 1280.50,
+  "dueDate": "2026-07-03"
+}
+
+
+### 14. 用户登录系统时，自动触发账单到期智能催缴通知
+GET http://localhost:8080/bill/check-remind?userId=1
+
+
+### 15. 进入管理员端：查看全台总用户、总记账笔数、活跃度大盘指标
+GET http://localhost:8080/admin/sys-stats
